@@ -1,0 +1,33 @@
+version: '3.9'
+
+networks:
+  java:
+    driver: bridge
+
+services:
+    blog:
+        image: 'docker-spring-boot:latest'
+        build:
+          context: .
+          dockerfile: Dockerfile
+        ports:
+            - "8081:8081"
+        depends_on:
+            - mongodb_blog
+        networks:
+        - java
+        container_name: blog
+        environment:
+          - SPRING_DATA_MONGODB_HOST=mongodb_blog
+          - SPRING_DATA_MONGODB_PORT=27017
+          - SPRING_DATA_MONGODB_DATABASE=test
+          - SPRING_DATA_MONGODB_AUTO-INDEX-CREATION=true
+          - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA=debug
+          - LOGGING_LEVEL_=ERRORS
+    mongodb_blog:
+        image: "mongo:latest"
+        ports:
+            - "27017:27017"     
+        networks:
+        - java
+        container_name: mongodb_blog
